@@ -1,0 +1,394 @@
+<html>
+<head><meta charset="utf-8"/>
+<meta charset="utf-8"/>
+<script src="lib/bindings/utils.js"></script>
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" referrerpolicy="no-referrer" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js"></script>
+<link href="lib/tom-select/tom-select.css" rel="stylesheet"/>
+<script src="lib/tom-select/tom-select.complete.min.js"></script>
+<center>
+<h1></h1>
+</center>
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+<link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" rel="stylesheet">
+<script crossorigin="anonymous" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
+<center>
+<h1></h1>
+</center>
+<style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+</link><style>body { margin: 50px; }</style><title>grafo recursos</title></head>
+<body><h2>Grafo Recursos</h2>
+<div class="card" style="width: 100%">
+<div class="card-header" id="select-menu">
+<div class="row no-gutters">
+<div class="col-10 pb-2">
+<select aria-label="Default select example" class="form-select" id="select-node" onchange="selectNode([value]);" placeholder="Select node...">
+<option selected="">Select a Node by ID</option>
+<option value="search-lambda">search-lambda</option>
+<option value="book-api-gateway">book-api-gateway</option>
+<option value="book-ecs-fargate">book-ecs-fargate</option>
+<option value="book-dynamodb">book-dynamodb</option>
+<option value="book-sqs">book-sqs</option>
+<option value="inventory-lambda">inventory-lambda</option>
+<option value="inventory-ecs-fargate">inventory-ecs-fargate</option>
+<option value="inventory-dynamodb">inventory-dynamodb</option>
+<option value="inventory-sns">inventory-sns</option>
+<option value="order-lambda">order-lambda</option>
+<option value="order-ecs-fargate">order-ecs-fargate</option>
+<option value="order-dynamodb">order-dynamodb</option>
+<option value="order-kafka-topic">order-kafka-topic</option>
+<option value="shipping-lambda">shipping-lambda</option>
+<option value="shipping-ecs-fargate">shipping-ecs-fargate</option>
+<option value="shipping-dynamodb">shipping-dynamodb</option>
+<option value="shipping-api-gateway">shipping-api-gateway</option>
+<option value="shipping-sqs">shipping-sqs</option>
+<option value="delivery-lambda">delivery-lambda</option>
+<option value="delivery-ecs-fargate">delivery-ecs-fargate</option>
+<option value="delivery-dynamodb">delivery-dynamodb</option>
+<option value="delivery-sns">delivery-sns</option>
+<option value="notification-lambda">notification-lambda</option>
+<option value="notification-ecs-fargate">notification-ecs-fargate</option>
+<option value="notification-dynamodb">notification-dynamodb</option>
+<option value="search-s3">search-s3</option>
+<option value="notification-kafka-topic">notification-kafka-topic</option>
+<option value="customer-lambda">customer-lambda</option>
+<option value="customer-ecs-fargate">customer-ecs-fargate</option>
+<option value="customer-dynamodb">customer-dynamodb</option>
+<option value="customer-api-gateway">customer-api-gateway</option>
+<option value="customer-sqs">customer-sqs</option>
+<option value="feedback-lambda">feedback-lambda</option>
+<option value="feedback-ecs-fargate">feedback-ecs-fargate</option>
+<option value="feedback-dynamodb">feedback-dynamodb</option>
+<option value="aws-secrets-manager">aws-secrets-manager</option>
+<option value="mainframe-old-service">mainframe-old-service</option>
+<option value="feedback-email-step-functions">feedback-email-step-functions</option>
+</select>
+</div>
+<div class="col-2 pb-2">
+<button class="btn btn-primary btn-block" onclick="neighbourhoodHighlight({nodes: []});" type="button">Reset Selection</button>
+</div>
+</div>
+</div>
+<div class="card-header" id="filter-menu">
+<div class="row no-gutters">
+<div class="col-3 pb-2">
+<select aria-label="Default select example" class="form-select" id="select-item" onchange="updateFilter(value, 'item')">
+<option value="">Select a network item</option>
+<option value="edge">edge</option>
+<option value="node">node</option>
+</select>
+</div>
+<div class="col-3 pb-2">
+<select aria-label="Default select example" class="form-select" id="select-property" onchange="updateFilter(value, 'property')">
+<option value="">Select a property...</option>
+</select>
+</div>
+<div class="col-3 pb-2">
+<select aria-label="Default select example" class="form-select" id="select-value">
+<option value="">Select value(s)...</option>
+</select>
+</div>
+<div class="col-1 pb-2">
+<button class="btn btn-primary btn-block" onclick="highlightFilter(filter);" type="button">Filter</button>
+</div>
+<div class="col-2 pb-2">
+<button class="btn btn-primary btn-block" onclick="clearFilter(true)" type="button">Reset Selection</button>
+</div>
+</div>
+</div>
+<div class="card-body" id="mynetwork"></div>
+</div>
+<script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+                  new TomSelect("#select-node",{
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      }
+                  });
+              
+
+              
+                  // explicitly using onItemAdd and this function as we need to save multiple values
+                  let updateValueFilter = function() {
+                      return function () {
+                      filter['value'].push(arguments[0])
+                      }
+                  }
+
+                  let valueControl = new TomSelect("#select-value",{
+                      maxItems: null,
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: updateValueFilter()
+                  });
+
+                  let addValues = function() {
+                      return function () {
+                          // clear the current value options and add the selected attribute values
+                          // tom-select handles duplicates
+                          let selectedProperty = arguments[0];
+                          valueControl.clear();
+                          valueControl.clearOptions();
+                          filter['value'] = []
+                          if (filter['item'] === 'node') {
+                              for (let each in allNodes) {
+                                  valueControl.addOption({
+                                      id:allNodes[each][selectedProperty],
+                                      title:allNodes[each][selectedProperty]
+                                  })
+                              }
+                          }
+                          else if (filter['item'] === 'edge') {
+                              for (let each in allEdges) {
+                                  valueControl.addOption({
+                                      id:allEdges[each][selectedProperty],
+                                      title:allEdges[each][selectedProperty]
+                                  })
+                              }
+                          }
+                      }
+                  };
+
+                  let propControl = new TomSelect("#select-property",{
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addValues()
+                  });
+
+                  let addProperties = function() {
+                      return function () {
+                          // loops through the selected network item and adds the attributes to dropdown
+                          // tom-select handles duplicates
+                          clearFilter(false)
+                          if (arguments[0] === 'edge') {
+                              for (let each in allEdges) {
+                                  if (allEdges.hasOwnProperty(each)) {
+                                      for (let eachProp in allEdges[each]) {
+                                          if (allEdges[each].hasOwnProperty(eachProp)) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          else if (arguments[0] === 'node') {
+                              for (let each in allNodes) {
+                                  if (allNodes.hasOwnProperty(each)) {
+                                      for (let eachProp in allNodes[each]) {
+                                          if (allNodes[each].hasOwnProperty(eachProp)
+                                              && (eachProp !== 'hidden' && eachProp !== 'savedLabel'
+                                                  && eachProp !== 'hiddenLabel')) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  };
+
+                  let itemControl = new TomSelect("#select-item",{
+                      create: false,
+                      sortField:{
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addProperties()
+                  });
+
+                  function clearFilter(reset) {
+                      // utility function to clear all the selected filter options
+                      // if reset is set to true, the existing filter will be removed
+                      // else, only the dropdown options are cleared
+                      propControl.clear();
+                      propControl.clearOptions();
+                      valueControl.clear();
+                      valueControl.clearOptions();
+                      filter = {
+                          item : '',
+                          property : '',
+                          value : []
+                      }
+                      if (reset) {
+                          itemControl.clear();
+                          filterHighlight({nodes: []})
+                      }
+                  }
+
+                  function updateFilter(value, key) {
+                      // key could be 'item' or 'property' and value is as selected in dropdown
+                      filter[key] = value
+                  }
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#7678e8", "id": "search-lambda", "image": "icons/lambda.png", "label": "search-lambda", "shape": "image"}, {"color": "#7678e8", "id": "book-api-gateway", "image": "icons/api-gateway.png", "label": "book-api-gateway", "shape": "image"}, {"color": "#7678e8", "id": "book-ecs-fargate", "image": "icons/ecs.png", "label": "book-ecs-fargate", "shape": "image"}, {"color": "#7678e8", "id": "book-dynamodb", "image": "icons/dynamodb.png", "label": "book-dynamodb", "shape": "image"}, {"color": "#7678e8", "id": "book-sqs", "image": "icons/sqs.png", "label": "book-sqs", "shape": "image"}, {"color": "#7678e8", "id": "inventory-lambda", "image": "icons/lambda.png", "label": "inventory-lambda", "shape": "image"}, {"color": "#7678e8", "id": "inventory-ecs-fargate", "image": "icons/ecs.png", "label": "inventory-ecs-fargate", "shape": "image"}, {"color": "#7678e8", "id": "inventory-dynamodb", "image": "icons/dynamodb.png", "label": "inventory-dynamodb", "shape": "image"}, {"color": "#7678e8", "id": "inventory-sns", "image": "icons/sns.png", "label": "inventory-sns", "shape": "image"}, {"color": "#7678e8", "id": "order-lambda", "image": "icons/lambda.png", "label": "order-lambda", "shape": "image"}, {"color": "#7678e8", "id": "order-ecs-fargate", "image": "icons/ecs.png", "label": "order-ecs-fargate", "shape": "image"}, {"color": "#7678e8", "id": "order-dynamodb", "image": "icons/dynamodb.png", "label": "order-dynamodb", "shape": "image"}, {"color": "#7678e8", "id": "order-kafka-topic", "image": "icons/kafka.png", "label": "order-kafka-topic", "shape": "image"}, {"color": "#7678e8", "id": "shipping-lambda", "image": "icons/lambda.png", "label": "shipping-lambda", "shape": "image"}, {"color": "#7678e8", "id": "shipping-ecs-fargate", "image": "icons/ecs.png", "label": "shipping-ecs-fargate", "shape": "image"}, {"color": "#7678e8", "id": "shipping-dynamodb", "image": "icons/dynamodb.png", "label": "shipping-dynamodb", "shape": "image"}, {"color": "#7678e8", "id": "shipping-api-gateway", "image": "icons/api-gateway.png", "label": "shipping-api-gateway", "shape": "image"}, {"color": "#7678e8", "id": "shipping-sqs", "image": "icons/sqs.png", "label": "shipping-sqs", "shape": "image"}, {"color": "#7678e8", "id": "delivery-lambda", "image": "icons/lambda.png", "label": "delivery-lambda", "shape": "image"}, {"color": "#7678e8", "id": "delivery-ecs-fargate", "image": "icons/ecs.png", "label": "delivery-ecs-fargate", "shape": "image"}, {"color": "#7678e8", "id": "delivery-dynamodb", "image": "icons/dynamodb.png", "label": "delivery-dynamodb", "shape": "image"}, {"color": "#7678e8", "id": "delivery-sns", "image": "icons/sns.png", "label": "delivery-sns", "shape": "image"}, {"color": "#7678e8", "id": "notification-lambda", "image": "icons/lambda.png", "label": "notification-lambda", "shape": "image"}, {"color": "#7678e8", "id": "notification-ecs-fargate", "image": "icons/ecs.png", "label": "notification-ecs-fargate", "shape": "image"}, {"color": "#7678e8", "id": "notification-dynamodb", "image": "icons/dynamodb.png", "label": "notification-dynamodb", "shape": "image"}, {"color": "#7678e8", "id": "search-s3", "image": "icons/s3.png", "label": "search-s3", "shape": "image"}, {"color": "#7678e8", "id": "notification-kafka-topic", "image": "icons/kafka.png", "label": "notification-kafka-topic", "shape": "image"}, {"color": "#7678e8", "id": "customer-lambda", "image": "icons/lambda.png", "label": "customer-lambda", "shape": "image"}, {"color": "#7678e8", "id": "customer-ecs-fargate", "image": "icons/ecs.png", "label": "customer-ecs-fargate", "shape": "image"}, {"color": "#7678e8", "id": "customer-dynamodb", "image": "icons/dynamodb.png", "label": "customer-dynamodb", "shape": "image"}, {"color": "#7678e8", "id": "customer-api-gateway", "image": "icons/api-gateway.png", "label": "customer-api-gateway", "shape": "image"}, {"color": "#7678e8", "id": "customer-sqs", "image": "icons/sqs.png", "label": "customer-sqs", "shape": "image"}, {"color": "#7678e8", "id": "feedback-lambda", "image": "icons/lambda.png", "label": "feedback-lambda", "shape": "image"}, {"color": "#7678e8", "id": "feedback-ecs-fargate", "image": "icons/ecs.png", "label": "feedback-ecs-fargate", "shape": "image"}, {"color": "#7678e8", "id": "feedback-dynamodb", "image": "icons/dynamodb.png", "label": "feedback-dynamodb", "shape": "image"}, {"color": "#7678e8", "id": "aws-secrets-manager", "image": "icons/secrets-manager.png", "label": "aws-secrets-manager", "shape": "image"}, {"color": "#7678e8", "id": "mainframe-old-service", "image": "icons/mainframe.png", "label": "mainframe-old-service", "shape": "image"}, {"color": "#7678e8", "id": "feedback-email-step-functions", "image": "icons/step-functions.png", "label": "feedback-email-step-functions", "shape": "image"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "search-lambda", "label": "invoke", "title": "metadata1", "to": "book-api-gateway"}, {"arrows": "to", "from": "search-lambda", "label": "get-object", "title": "metadata25", "to": "search-s3"}, {"arrows": "to", "from": "search-lambda", "label": "retrieve-secret", "title": "metadata35", "to": "aws-secrets-manager"}, {"arrows": "to", "from": "book-api-gateway", "label": "run-task", "title": "metadata2", "to": "book-ecs-fargate"}, {"arrows": "to", "from": "book-ecs-fargate", "label": "query", "title": "metadata3", "to": "book-dynamodb"}, {"arrows": "to", "from": "book-ecs-fargate", "label": "put-item", "title": "metadata40", "to": "book-dynamodb"}, {"arrows": "to", "from": "book-ecs-fargate", "label": "retrieve-secret", "title": "metadata37", "to": "aws-secrets-manager"}, {"arrows": "to", "from": "book-ecs-fargate", "label": "invoke", "title": "metadata41", "to": "mainframe-old-service"}, {"arrows": "to", "from": "book-sqs", "label": "receive-message", "title": "metadata5", "to": "inventory-lambda"}, {"arrows": "to", "from": "inventory-lambda", "label": "run-task", "title": "metadata6", "to": "inventory-ecs-fargate"}, {"arrows": "to", "from": "inventory-ecs-fargate", "label": "query", "title": "metadata7", "to": "inventory-dynamodb"}, {"arrows": "to", "from": "inventory-dynamodb", "label": "publish", "title": "metadata8", "to": "inventory-sns"}, {"arrows": "to", "from": "inventory-sns", "label": "notification", "title": "metadata9", "to": "order-lambda"}, {"arrows": "to", "from": "order-lambda", "label": "run-task", "title": "metadata10", "to": "order-ecs-fargate"}, {"arrows": "to", "from": "order-ecs-fargate", "label": "query", "title": "metadata11", "to": "order-dynamodb"}, {"arrows": "to", "from": "order-kafka-topic", "label": "consume-message", "title": "metadata13", "to": "shipping-lambda"}, {"arrows": "to", "from": "shipping-lambda", "label": "run-task", "title": "metadata14", "to": "shipping-ecs-fargate"}, {"arrows": "to", "from": "shipping-ecs-fargate", "label": "query", "title": "metadata15", "to": "shipping-dynamodb"}, {"arrows": "to", "from": "shipping-api-gateway", "label": "send-message", "title": "metadata17", "to": "shipping-sqs"}, {"arrows": "to", "from": "shipping-sqs", "label": "receive-message", "title": "metadata18", "to": "delivery-lambda"}, {"arrows": "to", "from": "delivery-lambda", "label": "run-task", "title": "metadata19", "to": "delivery-ecs-fargate"}, {"arrows": "to", "from": "delivery-ecs-fargate", "label": "query", "title": "metadata20", "to": "delivery-dynamodb"}, {"arrows": "to", "from": "delivery-sns", "label": "notification", "title": "metadata22", "to": "notification-lambda"}, {"arrows": "to", "from": "notification-lambda", "label": "run-task", "title": "metadata23", "to": "notification-ecs-fargate"}, {"arrows": "to", "from": "notification-ecs-fargate", "label": "query", "title": "metadata24", "to": "notification-dynamodb"}, {"arrows": "to", "from": "notification-kafka-topic", "label": "consume-message", "title": "metadata26", "to": "customer-lambda"}, {"arrows": "to", "from": "customer-lambda", "label": "run-task", "title": "metadata27", "to": "customer-ecs-fargate"}, {"arrows": "to", "from": "customer-ecs-fargate", "label": "query", "title": "metadata28", "to": "customer-dynamodb"}, {"arrows": "to", "from": "customer-api-gateway", "label": "send-message", "title": "metadata30", "to": "customer-sqs"}, {"arrows": "to", "from": "customer-sqs", "label": "receive-message", "title": "metadata31", "to": "feedback-lambda"}, {"arrows": "to", "from": "feedback-lambda", "label": "run-task", "title": "metadata32", "to": "feedback-ecs-fargate"}, {"arrows": "to", "from": "feedback-lambda", "label": "invoke", "title": "metadata42", "to": "feedback-email-step-functions"}, {"arrows": "to", "from": "feedback-ecs-fargate", "label": "query", "title": "metadata33", "to": "feedback-dynamodb"}, {"arrows": "to", "from": "aws-secrets-manager", "label": "provide-secret", "title": "metadata36", "to": "search-lambda"}, {"arrows": "to", "from": "aws-secrets-manager", "label": "provide-secret", "title": "metadata38", "to": "book-ecs-fargate"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"physics": {"barnesHut": {"centralGravity": 0.1, "springLength": 300}, "minVelocity": 0.75, "solver": "barnesHut"}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+                    network.on("click", neighbourhoodHighlight);
+                  
+
+                  
+                    network.on("selectNode", neighbourhoodHighlight);
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+</body>
+</html><style>
+            .notification {
+                visibility: hidden; /* Hidden by default */
+                min-width: 250px; /* Set a default minimum width */
+                margin-left: -125px; /* Divide value of min-width by 2 */
+                background-color: #333; /* Black background color */
+                color: #fff; /* White text color */
+                text-align: center; /* Centered text */
+                border-radius: 2px; /* Rounded borders */
+                padding: 16px; /* Padding */
+                position: fixed; /* Sit on top of the screen */
+                z-index: 1; /* Add a z-index if needed */
+                left: 50%; /* Center the snackbar */
+                bottom: 30px; /* 30px from the bottom */
+            }
+
+            /* Show the snackbar when clicking on a button (class added with JavaScript) */
+            .show {
+                visibility: visible; /* Show the snackbar */
+                /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+                However, delay the fade out process for 2.5 seconds */
+                -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+                animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            }
+
+            /* Animations to fade the snackbar in and out */
+            @-webkit-keyframes fadein {
+                from {bottom: 0; opacity: 0;}
+                to {bottom: 30px; opacity: 1;}
+            }
+
+            @keyframes fadein {
+                from {bottom: 0; opacity: 0;}
+                to {bottom: 30px; opacity: 1;}
+            }
+
+            @-webkit-keyframes fadeout {
+                from {bottom: 30px; opacity: 1;}
+                to {bottom: 0; opacity: 0;}
+            }
+
+            @keyframes fadeout {
+                from {bottom: 30px; opacity: 1;}
+                to {bottom: 0; opacity: 0;}
+            }
+
+</style>
+<div class="notification" id="notification">Nome do nó copiado!</div>
+<script>
+            // Evento de clique no nó
+            network.on("click", function(params) {
+                if (params.nodes.length > 0) {
+                    // Obtém o ID do nó clicado
+                    var nodeId = params.nodes[0];
+
+                    // Copia o ID do nó para a área de transferência
+                    navigator.clipboard.writeText(nodeId).then(function() {
+                        console.log('Copied node ID to clipboard: ' + nodeId);
+
+                        // Obtém o elemento de notificação
+                        var notification = document.getElementById("notification");
+
+                        // Adiciona a classe 'show' ao elemento de notificação para exibi-lo
+                        notification.className = "notification show";
+
+                        // Remove a classe 'show' após 3 segundos para ocultar a notificação
+                        setTimeout(function(){ notification.className = "notification"; }, 3000);
+                    }, function(err) {
+                        console.error('Could not copy node ID: ', err);
+                    });
+                }
+            });
+
+</script>
